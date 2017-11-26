@@ -20,22 +20,25 @@ VAR UPASS1$ = "root"
 
 'コマンド入力用変数
 VAR IN$
-
+VAR IN1$
+VAR IN2$
 
 'MAIN PROGRAM(LOGIN PROCESS)
 GOTO @LOGINPROCESSING
 
 @MAINPRG
 
+'コマンドの受付
+'IN$は、全てのコマンド入力のルートとなる変数である。IN$が非0である場合に、@COMPROCESSが呼び出され、各種コマンドが実行される形になる。このとき、オプション変数としてIN1$、IN2$の２つを取ることができる。この2つは、共に@COMPROCESSとその呼び出し先において有効化される。
 INPUT ">",IN$
-IF(IN$ != " ") THEN
- PRINT "TRUE"
+IF(IN$ != "") THEN
+ GOSUB @COMPROCESS
 ELSE
- PRINT "FALSE"
+ GOTO @MAINPRG
 ENDIF
 
 
-GOTO @END
+
 
 
 
@@ -73,12 +76,26 @@ ELSE
 ENDIF
 
 
+'command input process
 
-'LOGIN MANAGEMENT PROGRAM
+@COMPROCESS
+IF(IN$ == "shutdown") THEN
+ INPUT "_>",IN1$
+ INPUT "_>",IN2$
+
+ 'SWITCH ~ CASEをIF ~ THEN ~ ELSEで実装してみる
+ IF(IN1$ == "-r") THEN
+  IF(IN2$ == "now") THEN
+   GOTO @END
+  ELSE
+   WAIT IN2$
+   GOTO @END
+  ENDIF
+ ENDIF
+ENDIF
 
 
 
-'LOGIN NAME & PASSWORD DEFINITION DATA
 
 
 @END
