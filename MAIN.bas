@@ -1,14 +1,19 @@
 'OPTION STRICTを有効化し、全ての変数に型付けを強制させる。
 OPTION STRICT
 
+'OSのバージョン定義変数
+VAR OSVER$ = "System V 1 0.0.1_rc"
+
 '画面初期化
 CLS
 
-PRINT "IDM Operating System V ver.0.0.1"
+PRINT OSVER$
 
-PRINT "FOR SYSTEM New 3DSLL Copylight by STD Corporation"
+PRINT "FOR New 3DSLL easy operating system"
 
-WAIT 180 
+WAIT 180
+
+'各種変数定義
 
 'ログイン用の各種変数定義
 VAR LOGINNAME$
@@ -22,6 +27,10 @@ VAR UPASS1$ = "root"
 VAR IN$
 VAR IN1$
 VAR IN2$
+
+'ヘルプページ用入力変数
+VAR HELPIN$
+
 
 'MAIN PROGRAM(LOGIN PROCESS)
 GOTO @LOGINPROCESSING
@@ -44,6 +53,8 @@ ENDIF
 
 
 @LOGINPROCESSING
+CLS
+? OSVER$
 INPUT "loginname";LOGINNAME$
 
 'loginnameが正しいかどうかを判定してから、次のloginpass入力処理に進ませる。
@@ -80,23 +91,78 @@ ENDIF
 
 @COMPROCESS
 IF(IN$ == "shutdown") THEN
- INPUT "_>",IN1$
- INPUT "_>",IN2$
-
- 'SWITCH ~ CASEをIF ~ THEN ~ ELSEで実装してみる
- IF(IN1$ == "-r") THEN
-  IF(IN2$ == "now") THEN
-   GOTO @END
-  ELSE
-   WAIT IN2$
-   GOTO @END
-  ENDIF
+ INPUT "MORE OPTION? >",IN1$
+ IF(IN1$ == "") THEN
+  GOTO @ENDPROCESS
  ENDIF
+ IF IN1$ == "help" THEN
+  GOSUB @HELPPAGER
+ ENDIF
+
+
+
+
+' 'SWITCH ~ CASEをIF ~ THEN ~ ELSEで実装してみる
+' IF(IN1$ == "-r") THEN
+'  IF(IN2$ == "now") THEN
+'   GOTO @END
+'  ELSE
+'   WAIT IN2$
+'   GOTO @END
+'  ENDIF
+' ENDIF
 ENDIF
 
+@HELPPAGER
+
+CLS
+? "GETTING STARTED!"
+'言語選択
+INPUT "choose your language(jp/en)";HELPIN$
+if HELPIN$ != "jp" THEN
+ ? "sorry, this contents for jp users."
+ENDIF
+
+? "このページはヘルプページです。DATA化する予定があります。"
+? "目次："
+? "1.ABOUT THIS SYSTEM"
+? "2.COMPATIBLE OTHER OPERATING SYSTEM"
+? "3.COMMAND SYSTEM"
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
+'? ""
 
 
 
+@ENDPROCESS
+VAR FA$
+INPUT "System shutdown ok?(Y/n)",FA$
+IF FA$ == "n" THEN GOTO @MAINPRG
 
-@END
+ 
+CLS
+? OSVER$
+
+WAIT 56
+
+VAR I
+FOR I=0 TO 10 STEP 1
+ WAIT 48
+ ? "*"
+NEXT
+
+INPUT "PRESS RETURN KEY...",FA$
 END
