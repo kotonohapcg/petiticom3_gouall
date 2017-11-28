@@ -4,6 +4,8 @@ OPTION STRICT
 'OSのバージョン定義変数
 VAR OSVER$ = "System V 1 0.0.1_rc"
 
+VAR ROOTFAIL = "You haven't root permission"
+
 '画面初期化
 CLS
 
@@ -22,6 +24,9 @@ VAR LOGINPASS$
 'ログイン情報用の変数定義
 VAR UNAME1$ = "root"
 VAR UPASS1$ = "root"
+VAR ONAME1$ = "user"
+VAR OPASS1$ = "pass"
+
 
 'コマンド入力用変数
 VAR IN$
@@ -30,7 +35,7 @@ VAR IN2$
 
 'ヘルプページ用入力変数
 VAR HELPIN$
-
+VAR HELPIN#
 
 'MAIN PROGRAM(LOGIN PROCESS)
 GOTO @LOGINPROCESSING
@@ -61,7 +66,7 @@ INPUT "loginname";LOGINNAME$
 'loginname/loginpassの判断用フラグLOGINDEXを設定する。初期値は0。
 VAR LOGINDEX% = 0
 
-IF(LOGINNAME$ == UNAME1$) THEN
+IF(LOGINNAME$ == ONAME1$) THEN
  LOGINDEX%=0
 ELSE
  LOGINDEX%=1
@@ -75,7 +80,7 @@ ELSE
 ENDIF
 
 'loginpass入力後のLOGINDEXの値を評価。0→0ならログイン。0→1なら@LOGINPROCESSINGに飛ばす。
-IF(LOGINPASS$ == UPASS1$) THEN
+IF(LOGINPASS$ == OPASS1$) THEN
  LOGINDEX%=0
 ELSE
  LOGINDEX%=1
@@ -87,6 +92,10 @@ ELSE
 ENDIF
 
 
+'root権限保持・確認用の変数を定義する。
+VAR B2ROOT# = 0
+
+
 'command input process
 
 @COMPROCESS
@@ -95,9 +104,18 @@ IF(IN$ == "shutdown") THEN
  IF(IN1$ == "") THEN
   GOTO @ENDPROCESS
  ENDIF
- IF IN1$ == "help" THEN
+ELSEIF IN1$ == "help" THEN
   GOSUB @HELPPAGER
  ENDIF
+ELSEIF IN$ == "su" THEN
+ INPUT "PASSWORD";IN1$
+ IF IN1$ == "root" THEN
+  GOTO @ROOTPROMPT
+ ELSE
+  ? ROOTFAIL
+ ENDIF
+ELSE
+ GOTO @MAINPRG
 
 
 
@@ -129,6 +147,9 @@ ENDIF
 ? "2.COMPATIBLE OTHER OPERATING SYSTEM"
 ? "3.COMMAND SYSTEM"
 '? ""
+INPUT "jump to";HELPIN$
+IF HELPIN# == 1 THEN
+ 
 '? ""
 '? ""
 '? ""
